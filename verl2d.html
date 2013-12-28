@@ -1,0 +1,130 @@
+<html>
+<head><title>Verl2D</title></head>
+<!--<style>
+   body {
+    margin:0px;
+    padding:0px;
+    text-align:center;
+  }
+
+  canvas{
+    outline:0;
+    border:1px solid #000;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  </style>-->
+  </head>
+  <body>
+  	<h1>Verl2D: An experiment in artificial physics inspired by Molecular Dynamics</h1>
+    <canvas id='canvas'></canvas>
+    <p id="status">Status</p>
+    <p><input type="button" value="Reset" onclick="reset()"></input></p>
+	<p>
+	<b>Runtime</b><br>
+	Gravity between particles: <input type="text" id="gravc" value="0.0" onchange="readform()" size="5"></input>
+    Downward gravity: <input type="text" id="gravacc" value="0.01" onchange="readform()" size="5"></input>
+    van der Waals strength: <input type="text" id="ljm" value="0.1" onchange="readform()" size="5"></input>
+    Electrostatic strength: <input type="text" id="esm" value="500.0" onchange="readform()" size="5"></input>
+    Cooling: <input type="text" id="resist" value="0.001" onchange="readform()" size="6"></input>
+    Cooling on walls: <input type="text" id="coldwall" value="0.0" onchange="readform()" size="5"></input>
+    Heating: <input type="text" id="heat" value="0.0" onchange="readform()" size="5"></input>
+    Heating on walls: <input type="text" id="hotwall" value="0.0" onchange="readform()" size="5"></input>
+    Wall Width (pixels): <input type="text" id="wallwidth" value="10" onchange="readform()" size="5"></input>
+    Wall Force Constant: <input type="text" id="wallk" value="10.0" onchange="readform()" size="5"></input>
+    Closed Top: <input type="checkbox" id="closed" checked="checked" onchange="readform()"></input>
+    </p>
+	<p>
+	<b>Setup</b>
+	<br>
+	Width: <input type="text" id="gwidth" value="320" onchange="readform()" size="5"></input>
+	Height: <input type="text" id="gheight" value="200" onchange="readform()" size="5"></input>
+	
+	<br><b>Particle Type 1: </b>
+	Number <input type="text" id="p1n" value="40" onchange="readform()" size="5"></input>
+	Mass <input type="text" id="p1m" value="3" onchange="readform()" size="5"></input>
+	Charge <input type="text" id="p1ch" value="0" onchange="readform()" size="5"></input>
+	Radius <input type="text" id="p1r" value="5" onchange="readform()" size="5"></input>
+	Polarizability <input type="text" id="p1pol" value="0.5" onchange="readform()" size="5"></input>
+	Maximum initial velocity <input type="text" id="p1vm" value="0" onchange="readform()" size="5"></input>
+	Colour <input type="text" id="p1c" value="#fff" onchange="readform()" size="8"></input>
+	Border Colour <input type="text" id="p1cb" value="#777" onchange="readform()" size="8"></input>
+	<br><b>Particle Type 2: </b>
+	Number <input type="text" id="p2n" value="20" onchange="readform()" size="5"></input>
+	Mass <input type="text" id="p2m" value="3" onchange="readform()" size="5"></input>
+	Charge <input type="text" id="p2ch" value="1" onchange="readform()" size="5"></input>
+	Radius <input type="text" id="p2r" value="9" onchange="readform()" size="5"></input>
+	Polarizability <input type="text" id="p2pol" value="1" onchange="readform()" size="5"></input>
+	Maximum initial velocity <input type="text" id="p2vm" value="0" onchange="readform()" size="5"></input>
+	Colour <input type="text" id="p2c" value="#f00" onchange="readform()" size="8"></input>
+	Border Colour <input type="text" id="p2cb" value="#700" onchange="readform()" size="8"></input>
+	<br><b>Particle Type 3: </b>
+	Number <input type="text" id="p3n" value="20" onchange="readform()" size="5"></input>
+	Mass <input type="text" id="p3m" value="3" onchange="readform()" size="5"></input>
+	Charge <input type="text" id="p3ch" value="-1" onchange="readform()" size="5"></input>
+	Radius <input type="text" id="p3r" value="7" onchange="readform()" size="5"></input>
+	Polarizability <input type="text" id="p3pol" value="1" onchange="readform()" size="5"></input>
+	Maximum initial velocity <input type="text" id="p3vm" value="0" onchange="readform()" size="5"></input>
+	Colour <input type="text" id="p3c" value="#00f" onchange="readform()" size="8"></input>
+	Border Colour <input type="text" id="p3cb" value="#007" onchange="readform()" size="8"></input>
+	
+	</p>
+	<p>
+	<b>Advanced Runtime</b><br>
+	Time Step per cycle: <input type="text" id="timeStep" value="0.1" onchange="readform()" size="5"></input>
+	Cycles per frame: <input type="text" id="cycles" value="10" onchange="readform()" size="5"></input>
+	
+    </p>
+	<p><b>Description</b></p>
+    <p>A little HTML 5 experiment with some 2D physics, using Verlet integration to track the motions of particles.</p>
+    <p>In this version, particles can be influenced by three forces - gravity, electrostatic forces, and
+	simulated van der Waals forces (as simulated by the Lennard-Jones potential). This latter force
+	allows particles to repel each other at close range (the force is inversely proportional to the twelfth
+	power of the distance between the centres of particles) and attract each other (force is proportional to the sixth power).
+	Electrostatic interactions obey the inverse square law; you can also set the particles up to
+	attract each other by gravity. There is also a downwards gravitational attraction. The particles also
+	bounce off the walls, as if the walls were covered in perfectly bouncy springs.</p>
+
+	<p>This has been bested on Internet Explorer 11, Firefox 26, Chrome 31. It works best on Chrome, and next-best on Firefox. 
+	Firefox will sometimes start slowly then suddenly get quicker. If you want lots of particles,
+	try running on Chrome.</p>
+	
+	<p>Note the at the simulation is not always "numerically stable" - sometimes the calculations get
+	wild, the error snowball at each step and particles fly out of the arena. There are various things
+	you can do to avoid this, these will be explained with the parameters.</p>
+	
+	<p>Various parameters can be tweaked. The time step per cycle and cycles per frame control how fast the
+	simulation runs. Lower values of the time step make the simulation more accurate, and less prone
+	to numerical instability - try turning this down if the simulation explodes. Cycles per frame
+	affects how often the display updates.</p>
+	
+	<p>You can adjust the overall strength of the various forces - stronger forces make numerical
+	instability more likely. Also, you can add "heating" and "cooling",
+	which can apply in general, or just to particles that are bouncing off the walls. "Cooling" removes
+	a little bit of the velocity from each particle during each cycle - this gradually removes energy
+	from the simulation, allowing structures to form. This generally should be kept low (e.g. 0.001 is
+	considered "high"), although cooling on the walls can be higher - 0.5 is a good value. Heating
+	makes a random tweak to the velocity on each cycle, simulating the addition of random thermal motion to
+	each particle. Heating often requires higher values than cooling - 1.0 is a good value - it's often worth
+	setting this after the simulation has come to rest. Another way to cool the simulation is to allow
+	"evaporation" - turn "closed top" off, and high-energy particles will be able to fly out of the arena,
+	reducing the amount of energy in the simulation.</p>
+	
+	<p>When you change a runtime parameter, click away to another parameter, or press enter, and the
+	change will take effect immediately.</p>
+	
+	<p>Setup - the current version allows for three types of particle - those with a little programming
+	knowledge and cunning should be able to add more. The number of particles per type is important, as
+	the simulation slows down if there are too many. Try running in Google Chrome if you find it painfully
+	slow. If there are far too many particles, the simulation might not start - try making the arena
+	larger. It's generally good to balance the charge on the particles if you don't want the simulation 
+	to explode (either that, or use a lot of cooling and see the effect). "Polarizability" affects the
+	strength of the van der Waals forces - the higher, the stronger.</p>
+	
+	<p>The overall code base allows for more advanced features - such as particles connected by springs.
+	However, this is the basic version, and does not include these.</p>
+	
+    <p>Peter Corbett, 2013</p>
+    <script src="verl2d.js"></script>
+  </body>
+</html>
