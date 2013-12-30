@@ -1,0 +1,79 @@
+<html>
+<head><title>Verl2D</title></head>
+<!--<style>
+   body {
+    margin:0px;
+    padding:0px;
+    text-align:center;
+  }
+
+  canvas{
+    outline:0;
+    border:1px solid #000;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  </style>-->
+  </head>
+  <body>
+  	<h1>Verl2D Colours</h1>
+    <canvas id='canvas'></canvas>
+    <p id="status">Status</p>
+    <p><input type="button" value="Reset" onclick="reset()"></input></p>
+	<p>
+	<b>Runtime</b><br>
+	Gravity between particles: <input type="text" id="gravc" value="0.0" onchange="readform()" size="5"></input>
+    Downward gravity: <input type="text" id="gravacc" value="0.0" onchange="readform()" size="5"></input>
+    Repulsion strength: <input type="text" id="ljm" value="1.0" onchange="readform()" size="5"></input>
+    Repulsion exponent: <input type="text" id="rexp" value="12" onchange="readform()" size="5"></input>
+    Cooling: <input type="text" id="resist" value="0.001" onchange="readform()" size="6"></input>
+    Cooling on walls: <input type="text" id="coldwall" value="0.0" onchange="readform()" size="5"></input>
+    Heating: <input type="text" id="heat" value="0.0" onchange="readform()" size="5"></input>
+    Heating on walls: <input type="text" id="hotwall" value="0.0" onchange="readform()" size="5"></input>
+    Wall Width (pixels): <input type="text" id="wallwidth" value="10" onchange="readform()" size="5"></input>
+    Wall Force Constant: <input type="text" id="wallk" value="10.0" onchange="readform()" size="5"></input>
+    Closed Top: <input type="checkbox" id="closed" checked="checked" onchange="readform()"></input>
+    Colour Force Constant: <input type="text" id="colk" value="10.0" onchange="readform()" size="5"></input>
+    Colour Force Exponent: <input type="text" id="colexp" value="2" onchange="readform()" size="5"></input>
+    Colour Distance Constant: <input type="text" id="coldk" value="10.0" onchange="readform()" size="5"></input>
+    Colour Distance Exponent: <input type="text" id="coldexp" value="1" onchange="readform()" size="5"></input>
+    </p>
+	<p>
+	<b>Setup</b>
+	<br>
+	Width: <input type="text" id="gwidth" value="320" onchange="readform()" size="5"></input>
+	Height: <input type="text" id="gheight" value="200" onchange="readform()" size="5"></input>
+	
+	<br><b>Particle Type 1: </b>
+	Number <input type="text" id="p1n" value="100" onchange="readform()" size="5"></input>
+	Mass <input type="text" id="p1m" value="3" onchange="readform()" size="5"></input>
+	Charge <input type="text" id="p1ch" value="0" onchange="readform()" size="5"></input>
+	Radius <input type="text" id="p1r" value="5" onchange="readform()" size="5"></input>
+	Polarizability <input type="text" id="p1pol" value="0.5" onchange="readform()" size="5"></input>
+	Maximum initial velocity <input type="text" id="p1vm" value="0" onchange="readform()" size="5"></input>
+	</p>
+	<p>
+	<b>Advanced Runtime</b><br>
+	Time Step per cycle: <input type="text" id="timeStep" value="0.1" onchange="readform()" size="5"></input>
+	Cycles per frame: <input type="text" id="cycles" value="10" onchange="readform()" size="5"></input>
+	
+    </p>
+	<p><b>Description</b></p>
+    <p>Verl2D with a twist. Similar colours to each other attract.</p>
+    
+	<p>The simulated van der Waals forces have been altered, to remove the attractive term. Also, you
+	can adjust the repulsion exponent; the default is for the repulsion to be inversely proportional to
+	the twelfth power of the distance between particles, but you can use smaller (or larger) values. 
+	</p>
+
+	<p>Colour: first, the colour distance is calculated - the colours are in RGB, 0-255 for each of red,
+	green and blue, then the colour distance is the Euclidean distance between the two colours. The
+	attractive force is then:</p>
+	
+	<p>force = ((radius1+radius2)/distance)<sup>colour force exponent</sup> * colour force constant / (colour distance<sup>colour distance exponent</sup>)
+		</p>
+		
+    <p>Peter Corbett, 2013</p>
+    <script src="v2colours.js"></script>
+  </body>
+</html>
