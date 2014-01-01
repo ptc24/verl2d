@@ -25,7 +25,7 @@
 	Gravity between particles: <input type="text" id="gravc" value="0.0" onchange="readform()" size="5"></input>
     Downward gravity: <input type="text" id="gravacc" value="0.01" onchange="readform()" size="5"></input>
     van der Waals strength: <input type="text" id="ljm" value="0.1" onchange="readform()" size="5"></input>
-    Electrostatic strength: <input type="text" id="esm" value="500.0" onchange="readform()" size="5"></input>
+    Electrostatic strength: <input type="text" id="esm" value="250.0" onchange="readform()" size="5"></input>
     Cooling: <input type="text" id="resist" value="0.001" onchange="readform()" size="6"></input>
     Cooling on walls: <input type="text" id="coldwall" value="0.0" onchange="readform()" size="5"></input>
     Heating: <input type="text" id="heat" value="0.0" onchange="readform()" size="5"></input>
@@ -39,10 +39,11 @@
 	<br>
 	Width: <input type="text" id="gwidth" value="320" onchange="readform()" size="5"></input>
 	Height: <input type="text" id="gheight" value="200" onchange="readform()" size="5"></input>
+	Generate at bottom: <input type="checkbox" id="atbottom" onchange="readform()"></input>
 	
 	<br><b>Particle Type 1: </b>
 	Number <input type="text" id="p1n" value="40" onchange="readform()" size="5"></input>
-	Mass <input type="text" id="p1m" value="3" onchange="readform()" size="5"></input>
+	Mass <input type="text" id="p1m" value="1" onchange="readform()" size="5"></input>
 	Charge <input type="text" id="p1ch" value="0" onchange="readform()" size="5"></input>
 	Radius <input type="text" id="p1r" value="5" onchange="readform()" size="5"></input>
 	Polarizability <input type="text" id="p1pol" value="0.5" onchange="readform()" size="5"></input>
@@ -85,9 +86,10 @@
 	attract each other by gravity. There is also a downwards gravitational attraction. The particles also
 	bounce off the walls, as if the walls were covered in perfectly bouncy springs.</p>
 
-	<p>This has been bested on Internet Explorer 11, Firefox 26, Chrome 31. It works best on Chrome. 
-	Firefox will sometimes start slowly then suddenly get quicker - Internet Explorer is more consistent, but
-	slower than Firefox when Firefox is running well. If you want lots of particles, try running on Chrome.</p>
+	<p>This has been tested on Internet Explorer 11, Firefox 26, Chrome 31. I have got this working on
+	Internet Explorer 11 on my Windows 8 machine, but not on my Windows 7 machine. It occasionally
+	gets slow on Firefox - with some effort I have been able to stop it doing this most of the
+	time, but not always.</p>
 	
 	<p>Note the at the simulation is not always "numerically stable" - sometimes the calculations get
 	wild, the error snowball at each step and particles fly out of the arena. There are various things
@@ -121,10 +123,13 @@
 	to explode (either that, or use a lot of cooling and see the effect). "Polarizability" affects the
 	strength of the van der Waals forces - the higher, the stronger.</p>
 	
+	<p>You can also tell the setup to generate particles at the bottom of the arena - this is useful if
+	you're trying to start a simulation without too much energy in it.</p>
+	
 	<p>The overall code base allows for more advanced features - such as particles connected by springs.
 	However, this is the basic version, and does not include these.</p>
 	
-    <p>Peter Corbett, 2013</p>
+    <p>Peter Corbett, 2013-2014</p>
     <script src="verl2d.js"></script>
   </body>
 </html>
