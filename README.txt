@@ -8,7 +8,7 @@ These are distibuted under the MIT/X11 license - i.e.:
 
 // Verl2d
 
-//Copyright (c) 2013 Peter Corbett
+//Copyright (c) 2013-2014 Peter Corbett
 
 //Permission is hereby granted, free of charge, to any person obtaining a copy
 //of this software and associated documentation files (the "Software"), to deal

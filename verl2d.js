@@ -1,6 +1,6 @@
 // Verl2d
 
-//Copyright (c) 2013 Peter Corbett
+//Copyright (c) 2013-2014 Peter Corbett
 
 //Permission is hereby granted, free of charge, to any person obtaining a copy
 //of this software and associated documentation files (the "Software"), to deal
@@ -59,6 +59,8 @@ var esm = 500.0;
 
 // Is the top of the arena closed?
 var cclosed = 0;
+// Generate at the bottom
+var atbottom = 0;
 
 // Generation
 // Arena width and height
@@ -129,6 +131,7 @@ function readform() {
 	cb[2] = document.getElementById("p3cb").value;
 	
 	cclosed = document.getElementById("closed").checked ? 1 : 0;
+	atbottom = document.getElementById("atbottom").checked ? 1 : 0;
 }
 
 // Some initial clearing-up which is unlikely to have a huge effect
@@ -143,7 +146,21 @@ function presetup() {
 
 // Setup - this could vary from version to version
 function setup() {
+	// Avoid using Math due to slow Firefox
+	var mpr = r[1] > r[0] ? r[1] : r[0];
+	mpr = r[2] > mpr ? r[2] : mpr;
 	
+	// Allow a little slack for 
+	var area = (canvas.width - (mpr+2*wallwidth)) * (canvas.height - (mpr+2*wallwidth));
+
+	var takenarea = 0.0;
+
+	for(var j=0;j<number.length;j++) {
+		takenarea += r[j] * r[j] * number[j] * 3.14; // Approx pi is good enough;
+	}
+	
+	var fract = takenarea * 1.0 / area;
+				
 	var id = 0;
 	for(var j=0;j<number.length;j++) {	
 		for(var i=0;i<number[j];i++) {
@@ -154,7 +171,12 @@ function setup() {
 			// Modified canvas height
 			var mheight = canvas.height - (2*mww);
 			var x = (Math.random()*mwidth)+mww;
-			var y = (Math.random()*mheight)+mww;
+			var y;
+			if(atbottom == 1) {
+				y = (Math.random()*mheight*fract)+mww+(mheight*(1.0-fract));
+			} else {
+				y = (Math.random()*mheight)+mww;			
+			}
 			
 			items.push({id:id,x:x,y:y,xv:(Math.random()-0.5)*vm[j],yv:(Math.random()-0.5)*vm[j],c:c[j],cb:cb[j],r:r[j],m:m[j],ch:ch[j],pol:pol[j]});
 			id++;
@@ -165,12 +187,15 @@ function setup() {
 	while(conflict > 0) {
 		conflict = 0;
 		// For all particles...
+		var a;
+		var b;
+		var dist;
 		for(var i=0;i<items.length-1;i++) {
 			for(var j=i+1;j<items.length;j++) {
-				var a = items[i];
-				var b = items[j];
+				a = items[i];
+				b = items[j];
 				// Distance by Pythagoras
-				var dist = Math.sqrt(((a.x-b.x)*(a.x-b.x)) + ((a.y-b.y)*(a.y-b.y)));
+				dist = Math.sqrt(((a.x-b.x)*(a.x-b.x)) + ((a.y-b.y)*(a.y-b.y)));
 				// A little bit of ovelap isn't too bad
 				if(dist < (a.r + b.r)*0.8) {
 					// Ease particles apart by 1 pixel
@@ -213,7 +238,7 @@ function endsetup() {
 } 
 
 // Update a frame - several cycles of Verlet propagation
-function update(mod) {
+function update() {
 	var tt = Date.now();
 	// Several cycles
 	for(var iter=0;iter<cycles;iter++) {
@@ -251,11 +276,14 @@ function update(mod) {
 		var dr;
 		var dr6;
 		var f;
+		var fbd;
+		var invsq;
 		// Generic item-item interactions
 		// We're assuming everything in items is live.
-		for(var i=0;i<items.length-1;i++) {
+		var il = items.length;
+		for(var i=0;i<il-1;i++) {
 			a = items[i];
-			for(var j=i+1;j<items.length;j++) {
+			for(var j=i+1;j<il;j++) {
 				b = items[j];
 				// Distance
 				dist = Math.sqrt(((a.x-b.x)*(a.x-b.x)) + ((a.y-b.y)*(a.y-b.y)));
@@ -264,21 +292,24 @@ function update(mod) {
 				// ljr = sum of lennard-jones radii, dr = distance ration, dr6 is for calculation convenience
 				ljr = a.r + b.r;
 				dr = ljr / dist;
-				dr6 = Math.pow(dr, 6);
+				dr6 = dr*dr*dr*dr*dr*dr;
+				//dr6 = Math.pow(dr, 6);
 				// Lennard-Jones force
 				f = -ljm*a.pol*b.pol*((dr6*dr6)-2*dr6);
 				// Charge-charge interactions
-				f -= Math.pow(dist,-2) * a.ch * b.ch * esm;
+				invsq = 1.0 / (dist*dist);
+				
+				if(a.ch != 0.0 && b.ch != 0.0) f -= a.ch * b.ch * esm * invsq;
 				// Particle-particle gravity
-				f += Math.pow(dist,-2) * a.m * b.m * gravc;
+				if(gravc != 0.0) f += a.m * b.m * gravc * invsq;
 				
 				// Force by distance - convenience;
-				var fbd = f / dist;
+				fbd = f / dist;
 				// f=ma => a = f/m, partition force in proportion to x and y distances.
 				a.xa += (fbd/a.m) * (b.x-a.x);
 				a.ya += (fbd/a.m) * (b.y-a.y);
 				b.xa += (fbd/b.m) * (a.x-b.x);
-				b.ya += (fbd/b.m) * (a.y-b.y);			
+				b.ya += (fbd/b.m) * (a.y-b.y);	
 			}
 		}
 	
@@ -358,7 +389,8 @@ function update(mod) {
 	nframes++;
 	if(nframes % 10 == 0) {
 		var e = document.getElementById("status");
-		e.innerHTML = "calculation time per frame " + (Date.now()-tt) + " ms";
+		e.innerHTML = "Frames: " + nframes;
+		e.innerHTML += " Calculation time per frame: " + (Date.now()-tt) + " ms";
 		if(lost > 0) e.innerHTML += " Lost particles: " + lost;
 	}
 }
@@ -395,9 +427,8 @@ function render() {
 
 // Do a frame
 function run() {
-	update((Date.now() - time) / 1000);
+	update();
 	render();
-	time = Date.now();
 }
 
 // Set up
@@ -410,5 +441,4 @@ function reset() {
 
 reset();
 
-var time = Date.now();
 setInterval(run, 20);
