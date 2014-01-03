@@ -1,0 +1,106 @@
+<html>
+<head><title>Verl2D Object</title></head>
+<!--<style>
+   body {
+    margin:0px;
+    padding:0px;
+    text-align:center;
+  }
+
+  canvas{
+    outline:0;
+    border:1px solid #000;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  </style>-->
+  </head>
+  <body>
+  	<h1>Verl2D Object: Verl2D with a falling object</h1>
+    <canvas id='canvas'></canvas>
+    <p id="status">Status</p>
+    <p><input type="button" value="Reset" onclick="reset()"></input></p>
+	<p>
+	<b>Runtime</b><br>
+	Gravity between particles: <input type="text" id="gravc" value="0.0" onchange="readform()" size="5"></input>
+    Downward gravity: <input type="text" id="gravacc" value="0.01" onchange="readform()" size="5"></input>
+    van der Waals strength: <input type="text" id="ljm" value="0.1" onchange="readform()" size="5"></input>
+    Electrostatic strength: <input type="text" id="esm" value="250.0" onchange="readform()" size="5"></input>
+    Cooling: <input type="text" id="resist" value="0.001" onchange="readform()" size="6"></input>
+    Cooling on walls: <input type="text" id="coldwall" value="0.0" onchange="readform()" size="5"></input>
+    Heating: <input type="text" id="heat" value="0.0" onchange="readform()" size="5"></input>
+    Heating on walls: <input type="text" id="hotwall" value="0.0" onchange="readform()" size="5"></input>
+    Wall Width (pixels): <input type="text" id="wallwidth" value="10" onchange="readform()" size="5"></input>
+    Wall Force Constant: <input type="text" id="wallk" value="10.0" onchange="readform()" size="5"></input>
+    Closed Top: <input type="checkbox" id="closed" checked="checked" onchange="readform()"></input>
+    </p>
+	<p>
+	<b>Setup</b>
+	<br>
+	Width: <input type="text" id="gwidth" value="640" onchange="readform()" size="5"></input>
+	Height: <input type="text" id="gheight" value="400" onchange="readform()" size="5"></input>
+	Generate at bottom: <input type="checkbox" id="atbottom" onchange="readform()"></input>
+	
+	<br><b>Particle Type 1 (Object): </b>
+	<input type="hidden" id="p1n" value="40" onchange="readform()" size="5"></input>
+	Mass <input type="text" id="p1m" value="1" onchange="readform()" size="5"></input>
+	Charge <input type="text" id="p1ch" value="0" onchange="readform()" size="5"></input>
+	Radius <input type="text" id="p1r" value="9" onchange="readform()" size="5"></input>
+	Polarizability <input type="text" id="p1pol" value="1" onchange="readform()" size="5"></input>
+	Maximum initial velocity <input type="text" id="p1vm" value="0.01" onchange="readform()" size="5"></input>
+	Colour <input type="text" id="p1c" value="#fff" onchange="readform()" size="8"></input>
+	Border Colour <input type="text" id="p1cb" value="#777" onchange="readform()" size="8"></input>
+	<br><b>Object Parameters: </b>
+	Rows <input type="text" id="rows" value="4" onchange="readform()" size="5"></input>
+	Columns <input type="text" id="columns" value="3" onchange="readform()" size="5"></input>
+	Spacing <input type="text" id="spacing" value="18" onchange="readform()" size="5"></input>
+	Spring force constant <input type="text" id="springk" value="1" onchange="readform()" size="5"></input>
+	X of top left particle <input type="text" id="tlx" value="100" onchange="readform()" size="5"></input>
+	Y of top left particle <input type="text" id="tly" value="100" onchange="readform()" size="5"></input>
+	<br><b>Particle Type 2: </b>
+	Number <input type="text" id="p2n" value="0" onchange="readform()" size="5"></input>
+	Mass <input type="text" id="p2m" value="1" onchange="readform()" size="5"></input>
+	Charge <input type="text" id="p2ch" value="0" onchange="readform()" size="5"></input>
+	Radius <input type="text" id="p2r" value="7" onchange="readform()" size="5"></input>
+	Polarizability <input type="text" id="p2pol" value="1" onchange="readform()" size="5"></input>
+	Maximum initial velocity <input type="text" id="p2vm" value="0.01" onchange="readform()" size="5"></input>
+	Colour <input type="text" id="p2c" value="#aaa" onchange="readform()" size="8"></input>
+	Border Colour <input type="text" id="p2cb" value="#777" onchange="readform()" size="8"></input>
+	<br><b>Particle Type 3: </b>
+	Number <input type="text" id="p3n" value="0" onchange="readform()" size="5"></input>
+	Mass <input type="text" id="p3m" value="1" onchange="readform()" size="5"></input>
+	Charge <input type="text" id="p3ch" value="0" onchange="readform()" size="5"></input>
+	Radius <input type="text" id="p3r" value="7" onchange="readform()" size="5"></input>
+	Polarizability <input type="text" id="p3pol" value="1" onchange="readform()" size="5"></input>
+	Maximum initial velocity <input type="text" id="p3vm" value="0.01" onchange="readform()" size="5"></input>
+	Colour <input type="text" id="p3c" value="#aaa" onchange="readform()" size="8"></input>
+	Border Colour <input type="text" id="p3cb" value="#777" onchange="readform()" size="8"></input>
+	<br><b>Particle Type 4: </b>
+	Number <input type="text" id="p4n" value="0" onchange="readform()" size="5"></input>
+	Mass <input type="text" id="p4m" value="1" onchange="readform()" size="5"></input>
+	Charge <input type="text" id="p4ch" value="0" onchange="readform()" size="5"></input>
+	Radius <input type="text" id="p4r" value="7" onchange="readform()" size="5"></input>
+	Polarizability <input type="text" id="p4pol" value="1" onchange="readform()" size="5"></input>
+	Maximum initial velocity <input type="text" id="p4vm" value="0.01" onchange="readform()" size="5"></input>
+	Colour <input type="text" id="p4c" value="#aaa" onchange="readform()" size="8"></input>
+	Border Colour <input type="text" id="p4cb" value="#777" onchange="readform()" size="8"></input>
+	
+	
+	</p>
+	<p>
+	<b>Advanced Runtime</b><br>
+	Time Step per cycle: <input type="text" id="timeStep" value="0.1" onchange="readform()" size="5"></input>
+	Cycles per frame: <input type="text" id="cycles" value="10" onchange="readform()" size="5"></input>
+	
+    </p>
+	<p><b>Description</b></p>
+    
+	<p>This is based on <a href="verl2d.html">verl2d</a>, with the addition of an "object". The particles
+	in the object are connected by springs that obey Hooke's law (measuring the length of the spring
+	from the centres of the particles). Note that the angles of the springs are not fixed - try setting
+	the number of rows or columns to one, to get a flexible "chain" of particles.</p> 
+		
+    <p>Peter Corbett, 2013-2014</p>
+    <script src="v2object.js"></script>
+  </body>
+</html>
