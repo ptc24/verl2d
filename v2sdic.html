@@ -1,0 +1,98 @@
+<html>
+<head><title>V2SDIC: Verl2D showing sensitive dependence on initial conditions</title></head>
+<!--<style>
+   body {
+    margin:0px;
+    padding:0px;
+    text-align:center;
+  }
+
+  canvas{
+    outline:0;
+    border:1px solid #000;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  </style>-->
+  </head>
+  <body>
+  	<h1>V2SDIC: Verl2D showing sensitive dependence on initial conditions</h1>
+    <canvas id='canvas'></canvas>
+    <canvas id='canvas2'></canvas>
+    <p id="status">Status</p>
+    <p><input type="button" value="Reset" onclick="reset()"></input><input type="button" value="Get Log" onclick="copyLog()"></input></p>
+	<textarea id="log" rows="4" cols="80"></textarea>
+	<p>
+	<b>Runtime</b><br>
+	Gravity between particles: <input type="text" id="gravc" value="0.0" onchange="readform()" size="5"></input>
+    Downward gravity: <input type="text" id="gravacc" value="0.01" onchange="readform()" size="5"></input>
+    van der Waals strength: <input type="text" id="ljm" value="0.1" onchange="readform()" size="5"></input>
+    Electrostatic strength: <input type="text" id="esm" value="250.0" onchange="readform()" size="5"></input>
+    Cooling: <input type="text" id="resist" value="0.001" onchange="readform()" size="6"></input>
+    Cooling on walls: <input type="text" id="coldwall" value="0.0" onchange="readform()" size="5"></input>
+    Wall Width (pixels): <input type="text" id="wallwidth" value="10" onchange="readform()" size="5"></input>
+    Wall Force Constant: <input type="text" id="wallk" value="10.0" onchange="readform()" size="5"></input>
+    Closed Top: <input type="checkbox" id="closed" checked="checked" onchange="readform()"></input>
+    </p>
+	<p>
+	<b>Setup</b>
+	<br>
+	Width: <input type="text" id="gwidth" value="320" onchange="readform()" size="5"></input>
+	Height: <input type="text" id="gheight" value="200" onchange="readform()" size="5"></input>
+	Initial difference: <input type="text" id="initialdiff" value="0.000000000001" onchange="readform()" size="15"></input>
+	Generate at bottom: <input type="checkbox" id="atbottom" onchange="readform()"></input>
+	
+	<br><b>Particle Type 1: </b>
+	Number <input type="text" id="p1n" value="40" onchange="readform()" size="5"></input>
+	Mass <input type="text" id="p1m" value="1" onchange="readform()" size="5"></input>
+	Charge <input type="text" id="p1ch" value="0" onchange="readform()" size="5"></input>
+	Radius <input type="text" id="p1r" value="5" onchange="readform()" size="5"></input>
+	Polarizability <input type="text" id="p1pol" value="0.5" onchange="readform()" size="5"></input>
+	Maximum initial velocity <input type="text" id="p1vm" value="0" onchange="readform()" size="5"></input>
+	Colour <input type="text" id="p1c" value="#fff" onchange="readform()" size="8"></input>
+	Border Colour <input type="text" id="p1cb" value="#777" onchange="readform()" size="8"></input>
+	<br><b>Particle Type 2: </b>
+	Number <input type="text" id="p2n" value="20" onchange="readform()" size="5"></input>
+	Mass <input type="text" id="p2m" value="3" onchange="readform()" size="5"></input>
+	Charge <input type="text" id="p2ch" value="1" onchange="readform()" size="5"></input>
+	Radius <input type="text" id="p2r" value="9" onchange="readform()" size="5"></input>
+	Polarizability <input type="text" id="p2pol" value="1" onchange="readform()" size="5"></input>
+	Maximum initial velocity <input type="text" id="p2vm" value="0" onchange="readform()" size="5"></input>
+	Colour <input type="text" id="p2c" value="#f00" onchange="readform()" size="8"></input>
+	Border Colour <input type="text" id="p2cb" value="#700" onchange="readform()" size="8"></input>
+	<br><b>Particle Type 3: </b>
+	Number <input type="text" id="p3n" value="20" onchange="readform()" size="5"></input>
+	Mass <input type="text" id="p3m" value="3" onchange="readform()" size="5"></input>
+	Charge <input type="text" id="p3ch" value="-1" onchange="readform()" size="5"></input>
+	Radius <input type="text" id="p3r" value="7" onchange="readform()" size="5"></input>
+	Polarizability <input type="text" id="p3pol" value="1" onchange="readform()" size="5"></input>
+	Maximum initial velocity <input type="text" id="p3vm" value="0" onchange="readform()" size="5"></input>
+	Colour <input type="text" id="p3c" value="#00f" onchange="readform()" size="8"></input>
+	Border Colour <input type="text" id="p3cb" value="#007" onchange="readform()" size="8"></input>
+	
+	</p>
+	<p>
+	<b>Advanced Runtime</b><br>
+	Time Step per cycle: <input type="text" id="timeStep" value="0.1" onchange="readform()" size="5"></input>
+	Cycles per frame: <input type="text" id="cycles" value="10" onchange="readform()" size="5"></input>
+	
+    </p>
+	<p><b>Description</b></p>
+    <p>This is just like Verl2D, except you can see two arenas - these are (by default) two simulations
+	that start off with the tiniest of differences - a difference so tiny, if it were much smaller
+	the computer would lose it in a rounding error. The difference is in the x coordinate of one
+	of the particles of Type 1. You can see that things start out pretty similar, you can't see
+	the difference, until at some point the differences get large enough to see - and then so
+	large that they look as different as two different runs of the simulation.</p>
+	<p>This one doesn't have the "heating" options, as the heating options involve adding random numbers
+	while the simulation runs (it always involves random numbers in the setup), which is against the
+	spirit of the thing. Also, I've added a control so you can set the initial difference - if you set
+	it to zero, then you should see two identical simulations running next to each other. Finally,
+	I've provided a button to put a log into the text area. This tracks the frame number, and also
+	the x and y coordinates of that particle that got slightly tweaked in one simulation, showing its
+	position in both simulations.</p>
+	
+    <p>Peter Corbett, 2013-2014</p>
+    <script src="v2sdic.js"></script>
+  </body>
+</html>
